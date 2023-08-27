@@ -282,15 +282,9 @@ Then Bard will start by gdb, please send new issue with `*bard*' buffer content 
   (message "[Bard] Process started successfully."))
 
 (defun bard-chat-with-message (prompt)
-  (save-excursion
-    (goto-char (point-max))
-    (insert "## User:\n")
-    (insert (format "%s\n" prompt)))
-
-  (message "[Bard] Please wait for Bard...")
   (bard-call-async "bard_chat"
-		   prompt
-		   (buffer-name)))
+    prompt
+    (buffer-name)))
 
 (defun bard-finish-answer (buffer)
   (save-excursion
@@ -326,7 +320,11 @@ Then Bard will start by gdb, please send new issue with `*bard*' buffer content 
   (interactive)
   (let ((prompt (read-string "Chat with Bard: ")))
     (if (string-empty-p (string-trim prompt))
-	(message "Please do not enter an empty prompt.")
+      (message "Please do not enter an empty prompt.")
+      (save-excursion
+        (goto-char (point-max))
+        (insert "## User:\n")
+        (insert (format "%s\n" prompt)))
       (bard-chat-with-message prompt))))
 
 (defun bard-chat-with-multiline ()
